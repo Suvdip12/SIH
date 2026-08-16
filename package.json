@@ -1,0 +1,18 @@
+{
+  "name": "sih-kalyani-registration",
+  "version": "1.0.0",
+  "description": "Smart India Hackathon (SIH) 2026 — University of Kalyani Registration Portal",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:init": "node db-init.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
+  }
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH 2026 — Smart India Hackathon | University of Kalyani</title>
+  <meta name="description"
+    content="Register your team for Smart India Hackathon 2026 at the University of Kalyani. Innovate. Code. Solve. From Campus to Country.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Three.js Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="loader-content">
+      <div class="loader-cube">
+        <div class="cube-face front"></div>
+        <div class="cube-face back"></div>
+        <div class="cube-face left"></div>
+        <div class="cube-face right"></div>
+        <div class="cube-face top"></div>
+        <div class="cube-face bottom"></div>
+      </div>
+      <p class="loader-text">INITIALIZING<span class="loader-dots"></span></p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-title">SIH <span class="accent">2026</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#hero" class="nav-link active">Home</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#register" class="nav-link">Register</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <button class="nav-cta" onclick="scrollToSection('register')">Register Now</button>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#hero" class="mobile-link" onclick="closeMobileMenu()">Home</a>
+    <a href="#about" class="mobile-link" onclick="closeMobileMenu()">About</a>
+    <a href="#register" class="mobile-link" onclick="closeMobileMenu()">Register</a>
+    <a href="#contact" class="mobile-link" onclick="closeMobileMenu()">Contact</a>
+  </div>
+
+  <main>
+    <!-- ═══════════ HERO SECTION ═══════════ -->
+    <section id="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          University of Kalyani
+        </div>
+
+        <h1 class="hero-title">
+          <span class="title-sub">Smart India</span>
+          <span class="title-main" data-text="HACKATHON">HACKATHON</span>
+          <span class="title-year">2026</span>
+        </h1>
+
+        <p class="hero-tagline">
+          <span class="tagline-word" style="--i:0">Innovate.</span>
+          <span class="tagline-word" style="--i:1">Code.</span>
+          <span class="tagline-word" style="--i:2">Solve.</span>
+        </p>
+        <p class="hero-subtitle">From Campus to Country</p>
+
+        <!-- Countdown -->
+        <div class="countdown-container">
+          <p class="countdown-label">Registration Closes In</p>
+          <div class="countdown" id="countdown">
+            <div class="countdown-item">
+              <span class="countdown-value" id="cd-days">00</span>
+              <span class="countdown-unit">Days</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="cd-hours">00</span>
+              <span class="countdown-unit">Hours</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="cd-minutes">00</span>
+              <span class="countdown-unit">Min</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="cd-seconds">00</span>
+              <span class="countdown-unit">Sec</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-glow" onclick="scrollToSection('register')">
+            <span class="btn-icon">🚀</span> Register Your Team
+          </button>
+          <button class="btn btn-secondary" onclick="scrollToSection('about')">
+            Learn More ↓
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats" id="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-teams">0</span>
+            <span class="stat-label">Teams Registered</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-members">0</span>
+            <span class="stat-label">Participants</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">6</span>
+            <span class="stat-label">Max Team Size</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+        <span>Scroll Down</span>
+      </div>
+    </section>
+
+    <!-- ═══════════ ABOUT SECTION ═══════════ -->
+    <section id="about">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <span class="section-tag">// ABOUT</span>
+          <h2 class="section-title">What is <span class="accent">SIH</span>?</h2>
+          <p class="section-desc">Smart India Hackathon is a nationwide initiative to provide students a platform to
+            solve pressing problems and foster innovation. University of Kalyani invites all students to participate.
+          </p>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-grid">
+          <div class="info-card reveal" style="--delay: 0.1s">
+            <div class="card-icon">🖥️</div>
+            <h3>Format</h3>
+            <p>Software & Hardware Editions</p>
+          </div>
+          <div class="info-card reveal" style="--delay: 0.2s">
+            <div class="card-icon">👥</div>
+            <h3>Team Size</h3>
+            <p>Up to 6 Members per team</p>
+          </div>
+          <div class="info-card reveal" style="--delay: 0.3s">
+            <div class="card-icon">👩‍💻</div>
+            <h3>Diversity</h3>
+            <p>At least 1 female member required</p>
+          </div>
+          <div class="info-card reveal" style="--delay: 0.4s">
+            <div class="card-icon">🎯</div>
+            <h3>Goal</h3>
+            <p>Select a problem statement & build your solution</p>
+          </div>
+          <div class="info-card reveal" style="--delay: 0.5s">
+            <div class="card-icon">🏆</div>
+            <h3>Selection</h3>
+            <p>Internal Hackathon → SIH Finals</p>
+          </div>
+          <div class="info-card reveal" style="--delay: 0.6s">
+            <div class="card-icon">📅</div>
+            <h3>Deadline</h3>
+            <p>19th August, 2026</p>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-panel reveal">
+          <h3 class="panel-title">
+            <span class="panel-icon">⚠️</span>
+            Important Instructions
+          </h3>
+          <ul class="instruction-list">
+            <li>Each SIH team can have <strong>up to 6 members</strong>.</li>
+            <li>At least <strong>one female member</strong> should be included in every team.</li>
+            <li>Ensure that all information entered is <strong>correct and complete</strong>.</li>
+            <li>Teams selected through the <strong>Internal Hackathon</strong> will proceed to the SIH process.</li>
+            <li>All team members must be currently enrolled at the <strong>University of Kalyani</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ REGISTRATION SECTION ═══════════ -->
+    <section id="register">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <span class="section-tag">// REGISTER</span>
+          <h2 class="section-title">Register Your <span class="accent">Team</span></h2>
+          <p class="section-desc">Fill in the details below to register your team for SIH 2026. Complete all steps to
+            submit.</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="form-progress reveal">
+          <div class="progress-step active" data-step="1">
+            <div class="step-number">1</div>
+            <span class="step-label">Team Leader</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-step="2">
+            <div class="step-number">2</div>
+            <span class="step-label">Team Info</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-step="3">
+            <div class="step-number">3</div>
+            <span class="step-label">Members</span>
+          </div>
+          <div class="progress-line"></div>
+          <div class="progress-step" data-step="4">
+            <div class="step-number">4</div>
+            <span class="step-label">Review</span>
+          </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="form-container reveal">
+          <form id="registration-form" novalidate>
+
+            <!-- Step 1: Team Leader -->
+            <div class="form-step active" data-step="1">
+              <h3 class="step-title">👤 Team Leader Details</h3>
+              <p class="step-desc">The team leader will be the primary contact for communication.</p>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="leader-name">Full Name *</label>
+                  <input type="text" id="leader-name" required placeholder="Enter your full name">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-email">Email Address *</label>
+                  <input type="email" id="leader-email" required placeholder="email@example.com">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-phone">Phone Number *</label>
+                  <input type="tel" id="leader-phone" required placeholder="+91 XXXXX XXXXX">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-roll">Roll / Registration No. *</label>
+                  <input type="text" id="leader-roll" required placeholder="Enter roll number">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-dept">Department *</label>
+                  <select id="leader-dept" required>
+                    <option value="">Select Department</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Department of Engineering & Technology</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Biotechnology">Biotechnology</option>
+                    <option value="Environmental Science">Environmental Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Business Administration">Business Administration</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-semester">Semester *</label>
+                  <select id="leader-semester" required>
+                    <option value="">Select Semester</option>
+                    <option value="1">1st Semester</option>
+                    <option value="2">2nd Semester</option>
+                    <option value="3">3rd Semester</option>
+                    <option value="4">4th Semester</option>
+                    <option value="5">5th Semester</option>
+                    <option value="6">6th Semester</option>
+                    <option value="7">7th Semester</option>
+                    <option value="8">8th Semester</option>
+                  </select>
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="leader-gender">Gender *</label>
+                  <select id="leader-gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <span class="form-error"></span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <div></div>
+                <button type="button" class="btn btn-primary" onclick="nextStep()">
+                  Next: Team Info →
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Team Info -->
+            <div class="form-step" data-step="2">
+              <h3 class="step-title">🏷️ Team Information</h3>
+              <p class="step-desc">Provide your team name and the problem statement you're tackling.</p>
+
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label for="team-name">Team Name *</label>
+                  <input type="text" id="team-name" required placeholder="Enter a unique team name">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="problem-id">Problem Statement ID</label>
+                  <input type="text" id="problem-id" placeholder="e.g., SIH1234">
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                  <label for="edition">Edition *</label>
+                  <select id="edition" required>
+                    <option value="">Select Edition</option>
+                    <option value="Software">Software</option>
+                    <option value="Hardware">Hardware</option>
+                  </select>
+                  <span class="form-error"></span>
+                </div>
+                <div class="form-group full-width">
+                  <label for="problem-statement">Problem Statement Description</label>
+                  <textarea id="problem-statement" rows="3"
+                    placeholder="Briefly describe the problem statement you've selected..."></textarea>
+                  <span class="form-error"></span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                  ← Back
+                </button>
+                <button type="button" class="btn btn-primary" onclick="nextStep()">
+                  Next: Add Members →
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 3: Team Members -->
+            <div class="form-step" data-step="3">
+              <h3 class="step-title">👥 Team Members</h3>
+              <p class="step-desc">Add up to 5 more members (6 total including the leader). At least one member must be
+                female.</p>
+
+              <div class="members-info-bar">
+                <span id="member-count-display">Members: 1/6 (Leader counted)</span>
+                <span id="female-count-display" class="female-indicator">♀ Female members: <span
+                    id="female-count">0</span></span>
+              </div>
+
+              <div id="members-container">
+                <!-- Dynamic member forms will be inserted here -->
+              </div>
+
+              <button type="button" class="btn btn-add-member" id="add-member-btn" onclick="addMember()">
+                <span>+</span> Add Team Member
+              </button>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                  ← Back
+                </button>
+                <button type="button" class="btn btn-primary" onclick="nextStep()">
+                  Next: Review →
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 4: Review & Submit -->
+            <div class="form-step" data-step="4">
+              <h3 class="step-title">✅ Review & Submit</h3>
+              <p class="step-desc">Please verify all information before submitting. You won't be able to edit after
+                submission.</p>
+
+              <div id="review-content">
+                <!-- Dynamically populated -->
+              </div>
+
+              <div class="form-group confirm-check">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="confirm-check" required>
+                  <span class="checkmark"></span>
+                  I confirm that all information entered is correct and complete.
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                  ← Edit Details
+                </button>
+                <button type="button" class="btn btn-primary btn-glow btn-submit" id="submit-btn"
+                  onclick="submitForm()">
+                  🚀 Submit Registration
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal-overlay" id="success-modal">
+          <div class="modal-content">
+            <div class="success-animation">
+              <div class="success-checkmark">
+                <svg viewBox="0 0 52 52">
+                  <circle cx="26" cy="26" r="25" fill="none" />
+                  <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+              </div>
+            </div>
+            <h3>Registration Successful! 🎉</h3>
+            <p>Your team has been registered for SIH 2026. You'll receive further updates regarding the Internal
+              Hackathon.</p>
+            <div class="modal-team-info" id="modal-team-info"></div>
+            <button class="btn btn-primary" onclick="closeModal()">Done</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ CONTACT SECTION ═══════════ -->
+    <section id="contact">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <span class="section-tag">// CONTACT</span>
+          <h2 class="section-title">Get in <span class="accent">Touch</span></h2>
+        </div>
+
+        <div class="contact-grid reveal">
+          <div class="contact-card">
+            <div class="contact-icon">📞</div>
+            <h3>Sumit Mandi</h3>
+            <p>SIH Coordinator</p>
+            <a href="tel:+918927164451" class="contact-link">+91 89271 64451</a>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon">🏛️</div>
+            <h3>University of Kalyani</h3>
+            <p>Kalyani, Nadia, West Bengal</p>
+            <a href="https://www.klyuniv.ac.in" target="_blank" class="contact-link">klyuniv.ac.in</a>
+          </div>
+          <div class="contact-card">
+            <div class="contact-icon">📧</div>
+            <h3>Email Us</h3>
+            <p>For queries and support</p>
+            <a href="mailto:sih@klyuniv.ac.in" class="contact-link">sih@klyuniv.ac.in</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="footer-logo">⬡</span>
+        <span>SIH 2026 — University of Kalyani</span>
+      </div>
+      <p class="footer-tagline">Innovate. Code. Solve. From Campus to Country.</p>
+      <div class="footer-bottom">
+        <p>&copy; 2026 University of Kalyani. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
