@@ -216,7 +216,7 @@ function scrollToSection(id) {
 
 // ─── COUNTDOWN TIMER ───
 function updateCountdown() {
-  const deadline = new Date('2026-08-19T23:59:59+05:30').getTime();
+  const deadline = new Date('2026-08-21T23:59:59+05:30').getTime();
   const now = new Date().getTime();
   const diff = deadline - now;
 
