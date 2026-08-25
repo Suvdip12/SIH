@@ -181,6 +181,10 @@ app.put('/api/teams/:id', requireAdmin, async (req, res) => {
 
     // Check for duplicate emails/rolls (excluding this team's own members)
     if (Array.isArray(members) && members.length > 0) {
+      if (members.length > 6) {
+        return res.status(400).json({ error: 'Team must have 1–6 members' });
+      }
+
       const hasFemale = members.some(m => m.gender === 'Female');
       if (!hasFemale) {
         return res.status(400).json({ error: 'At least one female member is required in the team' });

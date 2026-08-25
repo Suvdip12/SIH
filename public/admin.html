@@ -702,20 +702,26 @@
       }
 
       .team-summary {
-        padding: 14px 16px;
-        flex-wrap: wrap;
-        gap: 10px;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 12px;
       }
 
       .team-title-section {
         gap: 10px;
-        flex: 1;
-        min-width: 0;
+        width: 100%;
+      }
+
+      .team-badge {
+        flex-shrink: 0;
+        align-self: flex-start;
       }
 
       .team-name {
-        font-size: 15px;
+        font-size: 16px;
         word-break: break-word;
+        margin-bottom: 2px;
       }
 
       .team-meta {
@@ -724,8 +730,29 @@
         margin-top: 6px;
       }
 
+      .meta-item {
+        font-size: 12px;
+      }
+
       .team-actions {
+        width: 100%;
+        justify-content: flex-start;
         gap: 8px;
+        padding-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        margin-top: 2px;
+      }
+
+      .team-actions .btn-edit,
+      .team-actions .btn-danger {
+        flex: 1;
+        text-align: center;
+      }
+
+      .team-actions .expand-icon {
+        flex-shrink: 0;
+        align-self: center;
+        padding: 0 4px;
       }
 
       .btn-danger, .btn-edit {
@@ -934,6 +961,7 @@
         <div id="edit-members-container">
           <!-- Populated dynamically -->
         </div>
+        <button type="button" class="btn btn-secondary" id="add-member-btn" onclick="addNewMemberCard()" style="width: 100%; margin-bottom: 4px;">+ Add Member</button>
 
         <div class="modal-actions">
           <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
@@ -1258,63 +1286,9 @@
         container.innerHTML = '';
 
         (team.members || []).forEach((m, idx) => {
-          const card = document.createElement('div');
-          card.className = 'member-edit-card';
-          card.dataset.memberId = m.id;
-          card.innerHTML = `
-            <div class="member-edit-title">
-              <span>${m.is_leader ? '👑 Leader' : 'Member ' + (idx + 1)}</span>
-            </div>
-            <div class="field-row">
-              <div class="field-group">
-                <label>Full Name</label>
-                <input type="text" class="m-full-name" value="${m.full_name || ''}" required>
-              </div>
-              <div class="field-group">
-                <label>Email</label>
-                <input type="email" class="m-email" value="${m.email || ''}" required>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field-group">
-                <label>Phone</label>
-                <input type="text" class="m-phone" value="${m.phone || ''}">
-              </div>
-              <div class="field-group">
-                <label>Roll / Reg No.</label>
-                <input type="text" class="m-roll" value="${m.roll_number || ''}" required>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field-group">
-                <label>Department</label>
-                <input type="text" class="m-dept" value="${m.department || ''}" required>
-              </div>
-              <div class="field-group">
-                <label>Semester</label>
-                <input type="number" class="m-sem" min="1" max="8" value="${m.semester || ''}" required>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field-group">
-                <label>Gender</label>
-                <select class="m-gender" required>
-                  <option value="Male" ${m.gender === 'Male' ? 'selected' : ''}>Male</option>
-                  <option value="Female" ${m.gender === 'Female' ? 'selected' : ''}>Female</option>
-                  <option value="Other" ${m.gender === 'Other' ? 'selected' : ''}>Other</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Role</label>
-                <select class="m-leader">
-                  <option value="true" ${m.is_leader ? 'selected' : ''}>Leader</option>
-                  <option value="false" ${!m.is_leader ? 'selected' : ''}>Member</option>
-                </select>
-              </div>
-            </div>
-          `;
-          container.appendChild(card);
+          container.appendChild(buildMemberCard(m, idx));
         });
+        updateAddMemberButtonState();
 
         document.getElementById('edit-modal-overlay').classList.add('open');
         document.body.style.overflow = 'hidden';
@@ -1322,6 +1296,92 @@
       } catch (err) {
         showToast(err.message, 'error');
       }
+    }
+
+    // Builds a member edit card. Pass no member (or {}) for a blank new-member card.
+    function buildMemberCard(m = {}, idx = null) {
+      const card = document.createElement('div');
+      card.className = 'member-edit-card';
+      const isNew = !m.id;
+      if (m.id) card.dataset.memberId = m.id;
+
+      const titleLabel = m.is_leader ? '👑 Leader' : (isNew ? 'New Member' : 'Member ' + ((idx ?? 0) + 1));
+
+      card.innerHTML = `
+        <div class="member-edit-title">
+          <span>${titleLabel}</span>
+          ${isNew ? '<button type="button" class="modal-close" style="font-size:16px;margin-left:auto;" onclick="this.closest(\'.member-edit-card\').remove(); updateAddMemberButtonState();" title="Remove this member">&times;</button>' : ''}
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Full Name</label>
+            <input type="text" class="m-full-name" value="${m.full_name || ''}" required>
+          </div>
+          <div class="field-group">
+            <label>Email</label>
+            <input type="email" class="m-email" value="${m.email || ''}" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Phone</label>
+            <input type="text" class="m-phone" value="${m.phone || ''}">
+          </div>
+          <div class="field-group">
+            <label>Roll / Reg No.</label>
+            <input type="text" class="m-roll" value="${m.roll_number || ''}" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Department</label>
+            <input type="text" class="m-dept" value="${m.department || ''}" required>
+          </div>
+          <div class="field-group">
+            <label>Semester</label>
+            <input type="number" class="m-sem" min="1" max="8" value="${m.semester || ''}" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Gender</label>
+            <select class="m-gender" required>
+              <option value="Male" ${m.gender === 'Male' ? 'selected' : ''}>Male</option>
+              <option value="Female" ${m.gender === 'Female' ? 'selected' : ''}>Female</option>
+              <option value="Other" ${m.gender === 'Other' ? 'selected' : ''}>Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Role</label>
+            <select class="m-leader">
+              <option value="true" ${m.is_leader ? 'selected' : ''}>Leader</option>
+              <option value="false" ${!m.is_leader ? 'selected' : ''}>Member</option>
+            </select>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    // Adds a blank member card for registering a new team member
+    function addNewMemberCard() {
+      const container = document.getElementById('edit-members-container');
+      const currentCount = container.querySelectorAll('.member-edit-card').length;
+      if (currentCount >= 6) {
+        showToast('A team can have a maximum of 6 members', 'warning');
+        return;
+      }
+      container.appendChild(buildMemberCard());
+      updateAddMemberButtonState();
+    }
+
+    function updateAddMemberButtonState() {
+      const container = document.getElementById('edit-members-container');
+      const btn = document.getElementById('add-member-btn');
+      const count = container.querySelectorAll('.member-edit-card').length;
+      btn.disabled = count >= 6;
+      btn.style.opacity = count >= 6 ? '0.5' : '1';
+      btn.style.cursor = count >= 6 ? 'not-allowed' : 'pointer';
     }
 
     function closeEditModal() {
@@ -1342,21 +1402,37 @@
       };
 
       const memberCards = document.querySelectorAll('#edit-members-container .member-edit-card');
-      const members = Array.from(memberCards).map(card => ({
-        id: parseInt(card.dataset.memberId),
-        full_name: card.querySelector('.m-full-name').value.trim(),
-        email: card.querySelector('.m-email').value.trim(),
-        phone: card.querySelector('.m-phone').value.trim(),
-        roll_number: card.querySelector('.m-roll').value.trim(),
-        department: card.querySelector('.m-dept').value.trim(),
-        semester: parseInt(card.querySelector('.m-sem').value),
-        gender: card.querySelector('.m-gender').value,
-        is_leader: card.querySelector('.m-leader').value === 'true'
-      }));
+      const members = Array.from(memberCards).map(card => {
+        const member = {
+          full_name: card.querySelector('.m-full-name').value.trim(),
+          email: card.querySelector('.m-email').value.trim(),
+          phone: card.querySelector('.m-phone').value.trim(),
+          roll_number: card.querySelector('.m-roll').value.trim(),
+          department: card.querySelector('.m-dept').value.trim(),
+          semester: parseInt(card.querySelector('.m-sem').value),
+          gender: card.querySelector('.m-gender').value,
+          is_leader: card.querySelector('.m-leader').value === 'true'
+        };
+        if (card.dataset.memberId) {
+          member.id = parseInt(card.dataset.memberId);
+        }
+        return member;
+      });
+
+      if (members.length < 1 || members.length > 6) {
+        showToast('Team must have 1–6 members', 'error');
+        return;
+      }
 
       const leaders = members.filter(m => m.is_leader);
       if (leaders.length !== 1) {
         showToast('Exactly one team leader is required', 'error');
+        return;
+      }
+
+      const hasFemale = members.some(m => m.gender === 'Female');
+      if (!hasFemale) {
+        showToast('At least one female member is required in the team', 'error');
         return;
       }
 

@@ -116,7 +116,7 @@ export async function deleteTeam(id) {
   return deleted;
 }
 
-// ─── Update Team + Members ───
+// ─── Update Team + Members (handles updates, new inserts, and removals) ───
 export async function updateTeam(id, teamData, membersData) {
   const [team] = await sql`
     UPDATE teams
@@ -130,25 +130,42 @@ export async function updateTeam(id, teamData, membersData) {
 
   if (!team) return null;
 
-  // Update each member individually (members identified by id)
   const members = [];
   if (Array.isArray(membersData)) {
+    // Remove members that existed before but are no longer in the submitted list
+    const existing = await sql`SELECT id FROM members WHERE team_id = ${id}`;
+    const keptIds = membersData.filter(m => m.id).map(m => m.id);
+    const toRemove = existing.map(e => e.id).filter(eid => !keptIds.includes(eid));
+    if (toRemove.length > 0) {
+      await sql`DELETE FROM members WHERE id = ANY(${toRemove}) AND team_id = ${id}`;
+    }
+
     for (const member of membersData) {
-      if (!member.id) continue;
-      const [updated] = await sql`
-        UPDATE members
-        SET full_name = ${member.full_name},
-            email = ${member.email},
-            phone = ${member.phone},
-            roll_number = ${member.roll_number},
-            department = ${member.department},
-            semester = ${member.semester},
-            gender = ${member.gender},
-            is_leader = ${member.is_leader}
-        WHERE id = ${member.id} AND team_id = ${id}
-        RETURNING *
-      `;
-      if (updated) members.push(updated);
+      if (member.id) {
+        // Update existing member
+        const [updated] = await sql`
+          UPDATE members
+          SET full_name = ${member.full_name},
+              email = ${member.email},
+              phone = ${member.phone},
+              roll_number = ${member.roll_number},
+              department = ${member.department},
+              semester = ${member.semester},
+              gender = ${member.gender},
+              is_leader = ${member.is_leader}
+          WHERE id = ${member.id} AND team_id = ${id}
+          RETURNING *
+        `;
+        if (updated) members.push(updated);
+      } else {
+        // Insert new member
+        const [inserted] = await sql`
+          INSERT INTO members (team_id, full_name, email, phone, roll_number, department, semester, gender, is_leader)
+          VALUES (${id}, ${member.full_name}, ${member.email}, ${member.phone}, ${member.roll_number}, ${member.department}, ${member.semester}, ${member.gender}, ${member.is_leader})
+          RETURNING *
+        `;
+        members.push(inserted);
+      }
     }
   }
 
