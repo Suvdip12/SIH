@@ -116,6 +116,65 @@ export async function deleteTeam(id) {
   return deleted;
 }
 
+// ─── Update Team + Members ───
+export async function updateTeam(id, teamData, membersData) {
+  const [team] = await sql`
+    UPDATE teams
+    SET team_name = ${teamData.team_name},
+        problem_id = ${teamData.problem_id},
+        problem_statement = ${teamData.problem_statement},
+        edition = ${teamData.edition}
+    WHERE id = ${id}
+    RETURNING *
+  `;
+
+  if (!team) return null;
+
+  // Update each member individually (members identified by id)
+  const members = [];
+  if (Array.isArray(membersData)) {
+    for (const member of membersData) {
+      if (!member.id) continue;
+      const [updated] = await sql`
+        UPDATE members
+        SET full_name = ${member.full_name},
+            email = ${member.email},
+            phone = ${member.phone},
+            roll_number = ${member.roll_number},
+            department = ${member.department},
+            semester = ${member.semester},
+            gender = ${member.gender},
+            is_leader = ${member.is_leader}
+        WHERE id = ${member.id} AND team_id = ${id}
+        RETURNING *
+      `;
+      if (updated) members.push(updated);
+    }
+  }
+
+  return { team, members };
+}
+
+// ─── Check duplicates while excluding a given team's own members ───
+export async function checkDuplicatesExcludingTeam(emails, rollNumbers, teamId) {
+  const existingEmails = await sql`
+    SELECT email FROM members WHERE email = ANY(${emails}) AND team_id != ${teamId}
+  `;
+  const existingRolls = await sql`
+    SELECT roll_number FROM members WHERE roll_number = ANY(${rollNumbers}) AND team_id != ${teamId}
+  `;
+  return {
+    duplicateEmails: existingEmails.map(e => e.email),
+    duplicateRolls: existingRolls.map(r => r.roll_number)
+  };
+}
+
+// ─── Check team name excluding a given team's own record ───
+export async function checkTeamNameExcludingTeam(teamName, teamId) {
+  const [existing] = await sql`SELECT id FROM teams WHERE team_name = ${teamName} AND id != ${teamId}`;
+  return !!existing;
+}
+
 // ─── Check if email or roll already exists ───
 export async function checkDuplicates(emails, rollNumbers) {
   const existingEmails = await sql`SELECT email FROM members WHERE email = ANY(${emails})`;

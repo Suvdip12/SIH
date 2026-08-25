@@ -12,7 +12,10 @@ import {
   getStats,
   deleteTeam,
   checkDuplicates,
-  checkTeamName
+  checkTeamName,
+  updateTeam,
+  checkDuplicatesExcludingTeam,
+  checkTeamNameExcludingTeam
 } from './db.js';
 
 dotenv.config();
@@ -152,6 +155,68 @@ app.delete('/api/teams/:id', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('Delete error:', err);
     res.status(500).json({ error: 'Failed to delete team' });
+  }
+});
+
+// PUT /api/teams/:id — Update a team and its members (Admin Only)
+app.put('/api/teams/:id', requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { team, members } = req.body;
+
+    if (!team?.team_name || !team?.edition) {
+      return res.status(400).json({ error: 'Team name and edition are required' });
+    }
+
+    const existing = await getTeamById(id);
+    if (!existing) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    // Check for duplicate team name (excluding this team)
+    const nameExists = await checkTeamNameExcludingTeam(team.team_name, id);
+    if (nameExists) {
+      return res.status(409).json({ error: `Team name "${team.team_name}" is already taken` });
+    }
+
+    // Check for duplicate emails/rolls (excluding this team's own members)
+    if (Array.isArray(members) && members.length > 0) {
+      const hasFemale = members.some(m => m.gender === 'Female');
+      if (!hasFemale) {
+        return res.status(400).json({ error: 'At least one female member is required in the team' });
+      }
+
+      const leaders = members.filter(m => m.is_leader);
+      if (leaders.length !== 1) {
+        return res.status(400).json({ error: 'Exactly one team leader is required' });
+      }
+
+      const emails = members.map(m => m.email);
+      const rolls = members.map(m => m.roll_number);
+      const { duplicateEmails, duplicateRolls } = await checkDuplicatesExcludingTeam(emails, rolls, id);
+
+      if (duplicateEmails.length > 0) {
+        return res.status(409).json({
+          error: `Email(s) already registered to another team: ${duplicateEmails.join(', ')}`
+        });
+      }
+      if (duplicateRolls.length > 0) {
+        return res.status(409).json({
+          error: `Roll number(s) already registered to another team: ${duplicateRolls.join(', ')}`
+        });
+      }
+    }
+
+    const result = await updateTeam(id, team, members);
+    res.json({ message: 'Team updated successfully!', data: result });
+
+  } catch (err) {
+    console.error('Update error:', err);
+    if (err.code === '23505') {
+      res.status(409).json({ error: 'Duplicate entry detected. A member with this email or roll number may already be registered.' });
+    } else {
+      res.status(500).json({ error: 'Failed to update team' });
+    }
   }
 });
 

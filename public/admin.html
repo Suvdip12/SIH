@@ -478,6 +478,341 @@
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
+
+    /* ─── Edit Modal ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9000;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 40px 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 640px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-close:hover {
+      color: var(--orange-500);
+    }
+
+    .modal-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 20px 0 10px;
+    }
+
+    .modal-section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field-row.single {
+      grid-template-columns: 1fr;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      border-color: var(--orange-500);
+    }
+
+    .member-edit-card {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .member-edit-card .member-edit-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .modal-actions .btn {
+      width: auto;
+      padding: 10px 20px;
+    }
+
+    .btn-edit {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-edit:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #3b82f6;
+      color: #93c5fd;
+    }
+
+    /* ─── MOBILE OPTIMIZATION ─── */
+    @media (max-width: 768px) {
+      #dashboard-screen {
+        padding: 20px 12px;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+
+      .header-left h1 {
+        font-size: 22px;
+      }
+
+      .header-actions {
+        width: 100%;
+        gap: 10px;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+        width: auto;
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        padding: 16px;
+      }
+
+      .stat-card p {
+        font-size: 24px;
+      }
+
+      .controls-panel {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .search-wrapper {
+        max-width: none;
+        min-width: 0;
+      }
+
+      .filter-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .filter-select {
+        width: 100%;
+      }
+
+      .team-summary {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .team-title-section {
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .team-name {
+        font-size: 15px;
+        word-break: break-word;
+      }
+
+      .team-meta {
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .team-actions {
+        gap: 8px;
+      }
+
+      .btn-danger, .btn-edit {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      .team-details {
+        padding: 0 16px 16px;
+      }
+
+      /* Card-style member list instead of a wide table */
+      .members-table-wrapper {
+        overflow-x: visible;
+      }
+
+      .members-table thead {
+        display: none;
+      }
+
+      .members-table, .members-table tbody, .members-table tr, .members-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .members-table tr {
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+        padding: 10px 12px;
+      }
+
+      .members-table td {
+        padding: 6px 0;
+        border-bottom: none;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .members-table td::before {
+        content: attr(data-label);
+        color: var(--text-muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        flex-shrink: 0;
+      }
+
+      .modal-card {
+        padding: 18px;
+        max-width: 100%;
+      }
+
+      .modal-overlay {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      .modal-card {
+        border-radius: 0;
+        min-height: 100vh;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-actions {
+        flex-direction: column-reverse;
+      }
+
+      .modal-actions .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .login-card {
+        padding: 28px 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -558,6 +893,54 @@
       <!-- Loaded dynamically -->
     </div>
 
+  </div>
+
+  <!-- ─── EDIT TEAM MODAL ─── -->
+  <div class="modal-overlay" id="edit-modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Modify Team</h2>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="edit-team-form">
+        <div class="modal-section-title">Team Details</div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="edit-team-name">Team Name</label>
+            <input type="text" id="edit-team-name" required>
+          </div>
+          <div class="field-group">
+            <label for="edit-edition">Edition</label>
+            <select id="edit-edition" required>
+              <option value="Software">Software</option>
+              <option value="Hardware">Hardware</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="edit-problem-id">Problem ID</label>
+            <input type="text" id="edit-problem-id">
+          </div>
+        </div>
+        <div class="field-row single">
+          <div class="field-group">
+            <label for="edit-problem-statement">Problem Statement</label>
+            <textarea id="edit-problem-statement" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-section-title">Team Members</div>
+        <div id="edit-members-container">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -707,6 +1090,7 @@
               </div>
             </div>
             <div class="team-actions" onclick="event.stopPropagation()">
+              <button class="btn-edit" onclick="openEditModal(${team.id})">Edit</button>
               <button class="btn-danger" onclick="deleteRegisteredTeam(${team.id}, '${team.team_name}')">Delete</button>
               <span class="expand-icon">▼</span>
             </div>
@@ -734,13 +1118,13 @@
                 <tbody>
                   ${team.members ? team.members.map(m => `
                     <tr class="${m.is_leader ? 'leader-row' : ''}">
-                      <td><span class="role-badge ${m.is_leader ? 'role-leader' : 'role-member'}">${m.is_leader ? 'Leader' : 'Member'}</span></td>
-                      <td><strong>${m.full_name}</strong></td>
-                      <td>${m.roll_number || 'N/A'}</td>
-                      <td>${m.department || 'N/A'}</td>
-                      <td>Sem ${m.semester || 'N/A'}</td>
-                      <td>${m.gender || 'N/A'}</td>
-                      <td><a href="mailto:${m.email}" style="color: var(--orange-500); text-decoration: none;">${m.email}</a></td>
+                      <td data-label="Role"><span class="role-badge ${m.is_leader ? 'role-leader' : 'role-member'}">${m.is_leader ? 'Leader' : 'Member'}</span></td>
+                      <td data-label="Name"><strong>${m.full_name}</strong></td>
+                      <td data-label="Roll/Reg No.">${m.roll_number || 'N/A'}</td>
+                      <td data-label="Department">${m.department || 'N/A'}</td>
+                      <td data-label="Sem">Sem ${m.semester || 'N/A'}</td>
+                      <td data-label="Gender">${m.gender || 'N/A'}</td>
+                      <td data-label="Email"><a href="mailto:${m.email}" style="color: var(--orange-500); text-decoration: none;">${m.email}</a></td>
                     </tr>
                   `).join('') : '<tr><td colspan="7">No members data</td></tr>'}
                 </tbody>
@@ -851,6 +1235,152 @@
       
       showToast('CSV Exported successfully!', 'success');
     }
+
+    // ─── EDIT TEAM MODAL ───
+    let editingTeamId = null;
+
+    async function openEditModal(teamId) {
+      try {
+        const res = await fetch(`/api/teams/${teamId}`, {
+          headers: { 'Authorization': `Bearer ${adminKey}` }
+        });
+
+        if (!res.ok) throw new Error('Failed to load team details');
+        const team = await res.json();
+
+        editingTeamId = teamId;
+        document.getElementById('edit-team-name').value = team.team_name || '';
+        document.getElementById('edit-edition').value = team.edition || 'Software';
+        document.getElementById('edit-problem-id').value = team.problem_id || '';
+        document.getElementById('edit-problem-statement').value = team.problem_statement || '';
+
+        const container = document.getElementById('edit-members-container');
+        container.innerHTML = '';
+
+        (team.members || []).forEach((m, idx) => {
+          const card = document.createElement('div');
+          card.className = 'member-edit-card';
+          card.dataset.memberId = m.id;
+          card.innerHTML = `
+            <div class="member-edit-title">
+              <span>${m.is_leader ? '👑 Leader' : 'Member ' + (idx + 1)}</span>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Full Name</label>
+                <input type="text" class="m-full-name" value="${m.full_name || ''}" required>
+              </div>
+              <div class="field-group">
+                <label>Email</label>
+                <input type="email" class="m-email" value="${m.email || ''}" required>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Phone</label>
+                <input type="text" class="m-phone" value="${m.phone || ''}">
+              </div>
+              <div class="field-group">
+                <label>Roll / Reg No.</label>
+                <input type="text" class="m-roll" value="${m.roll_number || ''}" required>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Department</label>
+                <input type="text" class="m-dept" value="${m.department || ''}" required>
+              </div>
+              <div class="field-group">
+                <label>Semester</label>
+                <input type="number" class="m-sem" min="1" max="8" value="${m.semester || ''}" required>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Gender</label>
+                <select class="m-gender" required>
+                  <option value="Male" ${m.gender === 'Male' ? 'selected' : ''}>Male</option>
+                  <option value="Female" ${m.gender === 'Female' ? 'selected' : ''}>Female</option>
+                  <option value="Other" ${m.gender === 'Other' ? 'selected' : ''}>Other</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Role</label>
+                <select class="m-leader">
+                  <option value="true" ${m.is_leader ? 'selected' : ''}>Leader</option>
+                  <option value="false" ${!m.is_leader ? 'selected' : ''}>Member</option>
+                </select>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+        document.getElementById('edit-modal-overlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+      editingTeamId = null;
+    }
+
+    document.getElementById('edit-team-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!editingTeamId) return;
+
+      const team = {
+        team_name: document.getElementById('edit-team-name').value.trim(),
+        edition: document.getElementById('edit-edition').value,
+        problem_id: document.getElementById('edit-problem-id').value.trim(),
+        problem_statement: document.getElementById('edit-problem-statement').value.trim()
+      };
+
+      const memberCards = document.querySelectorAll('#edit-members-container .member-edit-card');
+      const members = Array.from(memberCards).map(card => ({
+        id: parseInt(card.dataset.memberId),
+        full_name: card.querySelector('.m-full-name').value.trim(),
+        email: card.querySelector('.m-email').value.trim(),
+        phone: card.querySelector('.m-phone').value.trim(),
+        roll_number: card.querySelector('.m-roll').value.trim(),
+        department: card.querySelector('.m-dept').value.trim(),
+        semester: parseInt(card.querySelector('.m-sem').value),
+        gender: card.querySelector('.m-gender').value,
+        is_leader: card.querySelector('.m-leader').value === 'true'
+      }));
+
+      const leaders = members.filter(m => m.is_leader);
+      if (leaders.length !== 1) {
+        showToast('Exactly one team leader is required', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/teams/${editingTeamId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminKey}`
+          },
+          body: JSON.stringify({ team, members })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update team');
+
+        showToast('Team updated successfully!', 'success');
+        closeEditModal();
+        loadDashboardData();
+
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    });
 
     // Toast Helper
     function showToast(message, type = 'error') {
