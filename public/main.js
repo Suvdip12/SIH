@@ -338,6 +338,7 @@ function validateCurrentStep() {
   if (currentStep === 2) {
     valid = validateFields([
       { id: 'team-name', msg: 'Team name is required' },
+      { id: 'problem-id', msg: 'Please select a problem statement' },
       { id: 'edition', msg: 'Edition selection is required' }
     ]);
   }
@@ -584,7 +585,7 @@ function buildReview() {
   
   const teamData = {
     name: document.getElementById('team-name').value,
-    problemId: document.getElementById('problem-id').value || 'N/A',
+    problemId: document.getElementById('problem-id-value').value || document.getElementById('problem-id').value || 'N/A',
     problemStatement: document.getElementById('problem-statement').value || 'N/A',
     edition: document.getElementById('edition').value
   };
@@ -655,7 +656,7 @@ async function submitForm() {
   // Build payload
   const team = {
     team_name: document.getElementById('team-name').value.trim(),
-    problem_id: document.getElementById('problem-id').value.trim() || null,
+    problem_id: document.getElementById('problem-id-value').value.trim() || document.getElementById('problem-id').value.trim() || null,
     problem_statement: document.getElementById('problem-statement').value.trim() || null,
     edition: document.getElementById('edition').value
   };
@@ -758,9 +759,129 @@ function showToast(message, type = 'error') {
 }
 
 
+// ─── SIH 2026 Problem Statement Search ───
+let sihProblemStatements = [];
+
+async function loadProblemStatements() {
+  try {
+    const res = await fetch('/data/sih2026_ps.json');
+    if (!res.ok) throw new Error('Failed to load problem statements');
+    sihProblemStatements = await res.json();
+  } catch (err) {
+    console.error('Could not load SIH 2026 problem statement list:', err);
+  }
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function highlightMatch(text, query) {
+  if (!query) return escapeHTML(text);
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHTML(text);
+  return escapeHTML(text.slice(0, idx)) +
+    '<mark style="background:rgba(255,107,0,0.3);color:inherit;">' + escapeHTML(text.slice(idx, idx + query.length)) + '</mark>' +
+    escapeHTML(text.slice(idx + query.length));
+}
+
+function renderPsSuggestions(query) {
+  const box = document.getElementById('ps-suggestions');
+  const editionFilter = document.getElementById('edition').value;
+
+  let results = sihProblemStatements;
+  if (editionFilter) {
+    results = results.filter(p => p.category === editionFilter);
+  }
+
+  const q = query.trim().toLowerCase();
+  if (q) {
+    results = results.filter(p =>
+      p.ps_number.toLowerCase().includes(q) ||
+      p.title.toLowerCase().includes(q) ||
+      p.theme.toLowerCase().includes(q) ||
+      p.org.toLowerCase().includes(q)
+    );
+  }
+
+  results = results.slice(0, 25);
+
+  if (results.length === 0) {
+    box.innerHTML = '<div class="ps-suggestion-empty">No matching problem statements found</div>';
+    box.classList.add('open');
+    return;
+  }
+
+  box.innerHTML = results.map(p => `
+    <div class="ps-suggestion-item" data-ps="${escapeHTML(p.ps_number)}">
+      <span class="ps-suggestion-code">${highlightMatch(p.ps_number, q)}</span>
+      <span class="ps-suggestion-cat">${escapeHTML(p.category)}</span>
+      <div class="ps-suggestion-title">${highlightMatch(p.title, q)}</div>
+    </div>
+  `).join('');
+
+  box.classList.add('open');
+
+  box.querySelectorAll('.ps-suggestion-item').forEach(item => {
+    item.addEventListener('click', () => {
+      selectProblemStatement(item.dataset.ps);
+    });
+  });
+}
+
+function selectProblemStatement(psNumber) {
+  const ps = sihProblemStatements.find(p => p.ps_number === psNumber);
+  if (!ps) return;
+
+  const input = document.getElementById('problem-id');
+  input.value = `${ps.ps_number} - ${ps.title}`;
+  document.getElementById('problem-id-value').value = ps.ps_number;
+  document.getElementById('problem-statement').value = ps.description || ps.title;
+
+  // Auto-fill edition if not already set
+  const editionSelect = document.getElementById('edition');
+  if (!editionSelect.value) {
+    editionSelect.value = ps.category;
+  }
+
+  const orgTheme = document.getElementById('ps-org-theme');
+  document.getElementById('ps-org').textContent = ps.org;
+  document.getElementById('ps-theme').textContent = ps.theme;
+  orgTheme.style.display = 'block';
+
+  document.getElementById('ps-suggestions').classList.remove('open');
+}
+
+function initPsSearch() {
+  const input = document.getElementById('problem-id');
+  const box = document.getElementById('ps-suggestions');
+  if (!input || !box) return;
+
+  input.addEventListener('focus', () => renderPsSuggestions(input.value));
+  input.addEventListener('input', () => {
+    document.getElementById('problem-id-value').value = '';
+    renderPsSuggestions(input.value);
+  });
+
+  document.getElementById('edition').addEventListener('change', () => {
+    if (document.activeElement === input) renderPsSuggestions(input.value);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.ps-suggestions') && e.target.id !== 'problem-id') {
+      box.classList.remove('open');
+    }
+  });
+}
+
+
 // ─── Initialize ───
 document.addEventListener('DOMContentLoaded', () => {
   updateMemberCounts();
+  loadProblemStatements();
+  initPsSearch();
   
   // Clear field errors on input
   document.addEventListener('input', (e) => {
