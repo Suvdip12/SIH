@@ -991,6 +991,13 @@ section {
   background: rgba(255, 107, 0, 0.03);
 }
 
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .form-group select {
   cursor: pointer;
   appearance: none;

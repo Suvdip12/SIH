@@ -338,8 +338,9 @@ function validateCurrentStep() {
   if (currentStep === 2) {
     valid = validateFields([
       { id: 'team-name', msg: 'Team name is required' },
-      { id: 'problem-id', msg: 'Please select a problem statement' },
-      { id: 'edition', msg: 'Edition selection is required' }
+      { id: 'edition', msg: 'Edition selection is required' },
+      { id: 'theme', msg: 'Please select a theme' },
+      { id: 'problem-id', msg: 'Please select a problem statement' }
     ]);
   }
 
@@ -787,13 +788,69 @@ function highlightMatch(text, query) {
     escapeHTML(text.slice(idx + query.length));
 }
 
+function populateThemeOptions() {
+  const editionVal = document.getElementById('edition').value;
+  const themeSelect = document.getElementById('theme');
+  const psInput = document.getElementById('problem-id');
+
+  // Reset downstream fields whenever edition changes
+  themeSelect.innerHTML = '';
+  psInput.value = '';
+  document.getElementById('problem-id-value').value = '';
+  document.getElementById('problem-statement').value = '';
+  document.getElementById('ps-org-theme').style.display = 'none';
+  document.getElementById('ps-suggestions').classList.remove('open');
+
+  if (!editionVal) {
+    themeSelect.innerHTML = '<option value="">Select Edition first</option>';
+    themeSelect.disabled = true;
+    psInput.disabled = true;
+    psInput.placeholder = 'Select edition and theme first';
+    return;
+  }
+
+  const themes = [...new Set(
+    sihProblemStatements.filter(p => p.category === editionVal).map(p => p.theme)
+  )].sort();
+
+  themeSelect.innerHTML = '<option value="">Select Theme</option>' +
+    themes.map(t => `<option value="${escapeHTML(t)}">${escapeHTML(t)}</option>`).join('');
+  themeSelect.disabled = false;
+
+  psInput.disabled = true;
+  psInput.placeholder = 'Select a theme first';
+}
+
+function onThemeChange() {
+  const themeVal = document.getElementById('theme').value;
+  const psInput = document.getElementById('problem-id');
+
+  psInput.value = '';
+  document.getElementById('problem-id-value').value = '';
+  document.getElementById('problem-statement').value = '';
+  document.getElementById('ps-org-theme').style.display = 'none';
+
+  if (!themeVal) {
+    psInput.disabled = true;
+    psInput.placeholder = 'Select a theme first';
+    return;
+  }
+
+  psInput.disabled = false;
+  psInput.placeholder = 'Search by PS number, title, or keyword';
+}
+
 function renderPsSuggestions(query) {
   const box = document.getElementById('ps-suggestions');
   const editionFilter = document.getElementById('edition').value;
+  const themeFilter = document.getElementById('theme').value;
 
   let results = sihProblemStatements;
   if (editionFilter) {
     results = results.filter(p => p.category === editionFilter);
+  }
+  if (themeFilter) {
+    results = results.filter(p => p.theme === themeFilter);
   }
 
   const q = query.trim().toLowerCase();
@@ -840,12 +897,6 @@ function selectProblemStatement(psNumber) {
   document.getElementById('problem-id-value').value = ps.ps_number;
   document.getElementById('problem-statement').value = ps.description || ps.title;
 
-  // Auto-fill edition if not already set
-  const editionSelect = document.getElementById('edition');
-  if (!editionSelect.value) {
-    editionSelect.value = ps.category;
-  }
-
   const orgTheme = document.getElementById('ps-org-theme');
   document.getElementById('ps-org').textContent = ps.org;
   document.getElementById('ps-theme').textContent = ps.theme;
@@ -859,15 +910,16 @@ function initPsSearch() {
   const box = document.getElementById('ps-suggestions');
   if (!input || !box) return;
 
-  input.addEventListener('focus', () => renderPsSuggestions(input.value));
+  input.addEventListener('focus', () => {
+    if (!input.disabled) renderPsSuggestions(input.value);
+  });
   input.addEventListener('input', () => {
     document.getElementById('problem-id-value').value = '';
     renderPsSuggestions(input.value);
   });
 
-  document.getElementById('edition').addEventListener('change', () => {
-    if (document.activeElement === input) renderPsSuggestions(input.value);
-  });
+  document.getElementById('edition').addEventListener('change', populateThemeOptions);
+  document.getElementById('theme').addEventListener('change', onThemeChange);
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.ps-suggestions') && e.target.id !== 'problem-id') {
